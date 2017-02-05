@@ -2,9 +2,9 @@
 
 A package for React Native apps to show in-app notifications. Only tested on iOS but should work on Android.
 
-# Usage 
+# Usage
 ```
-<LocalNotification 
+<LocalNotification
   text="My awesome notification text"
   onNotificationPress={() => alert('pressed')}
   onNotificationHide={() => alert('hidden')}
@@ -49,7 +49,8 @@ render(){
 
 Name | Type | Required | Default
 --- | --- | --- | ---
-Text | `string` | Yes | Hello 👋🏼
+text | `string` | Yes | Hello 👋🏼
+duration | `number` | Yes | 3500
 startHeight | `number` | Yes | 46
 onNotificationPress | `func` | No | `NULL`
 onNotificationWillShow | `func` | No | `NULL`

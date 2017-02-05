@@ -7,6 +7,7 @@ import {
   LayoutAnimation,
   UIManager
 } from 'react-native';
+import timer from 'react-native-timer';
 
 UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 
@@ -27,6 +28,10 @@ class LocalNotification extends Component {
     };
   }
 
+  componentDidMount() {
+    timer.setTimeout('duration', this.hideNotification.bind(this), this.props.duration);
+  }
+
   isPress(y, x) {
     return Math.abs(y) < 4 && Math.abs(x) < 4;
   }
@@ -34,7 +39,7 @@ class LocalNotification extends Component {
   hideNotification() {
     const config = {
       ...LayoutAnimation.Presets.linear,
-      duration: 200,
+      duration: 250,
     }
     LayoutAnimation.configureNext(config, () => {
       this.props.onNotificationHide && this.props.onNotificationHide();
@@ -84,10 +89,12 @@ class LocalNotification extends Component {
           if (this.state.topMargin > 0) {
             LayoutAnimation.easeInEaseOut();
             this.setState({ topMargin: 0 });
+            timer.clearTimeout('duration');
           }
           else if (this.state.textHeight < this.fullTextHeight && this.state.topMargin >= 0) {
             LayoutAnimation.easeInEaseOut();
             this.setState({ textHeight: this.fullTextHeight });
+            timer.clearTimeout('duration');
           }
           else if (this.state.topMargin < 0){
             this.hideNotification();
@@ -133,6 +140,7 @@ class LocalNotification extends Component {
 LocalNotification.propTypes = {
   text: React.PropTypes.string.isRequired,
   startHeight: React.PropTypes.number.isRequired,
+  duration: React.PropTypes.number.isRequired,
   onNotificationPress: React.PropTypes.func,
   onNotificationWillShow: React.PropTypes.func,
 }
@@ -144,6 +152,7 @@ LocalNotification.defaultProps = {
   notificationStyle: {},
   ellipsizeTextStyle: {},
   startHeight: 46,
+  duration: 3500,
 };
 
 const styles = StyleSheet.create({
