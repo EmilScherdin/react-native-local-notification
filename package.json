@@ -1,11 +1,16 @@
 {
   "name": "react-native-local-notification",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "React Native package for showing notifications while in the app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmilScherdin/react-native-local-notification.git"
+  },
+  "url": "https://github.com/EmilScherdin/react-native-local-notification",
   "author": "Emil Scherdin",
   "license": "MIT"
 }
