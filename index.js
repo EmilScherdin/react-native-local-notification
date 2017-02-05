@@ -18,7 +18,7 @@ class LocalNotification extends Component {
     this._panResponder = null;
     this.fullTextHeight = null;
     this.textHeightSetCurrentTouch = false;
-    this.startHeight = 46;
+    this.startHeight = this.props.startHeight;
 
     this.state = {
       topMargin: -100,
@@ -56,7 +56,6 @@ class LocalNotification extends Component {
         this.textHeightSetCurrentTouch = false;
       },
       onPanResponderMove: (evt, gestureState) => {
-        console.log(this.state.textHeight, this.fullTextHeight)
         if (this.state.textHeight < this.fullTextHeight && gestureState.dy > 0) {
           this.setState({
             textHeight: (gestureState.dy + this.startHeight) > this.fullTextHeight ? this.fullTextHeight : gestureState.dy + this.startHeight,
@@ -118,12 +117,12 @@ class LocalNotification extends Component {
     return (
       <View style={styles.wrapper}>
         <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -280 + this.state.topMargin + this.state.textHeight}]}>
-          <View style={styles.innerView}>
-            <Text style={[styles.ellipsizeText,{ opacity: isdragged ? 0 : 1 }]} ellipsizeMode="tail" numberOfLines={2}>{this.props.text}</Text>
+          <View style={[styles.innerView, this.props.notificationStyle]}>
+            <Text style={[styles.ellipsizeText,{ opacity: isdragged ? 0 : 1 }, this.props.ellipsizeTextStyle]} ellipsizeMode="tail" numberOfLines={2}>{this.props.text}</Text>
             <View style={[styles.textWrapper, {height: this.state.textHeight, marginTop: -1 * this.state.textHeight, opacity: isdragged ? 1 : 0}]}>
-              <Text style={styles.text} onLayout={(e) => this.onLayout(e)} ellipsizeMode="tail" numberOfLines={5}>{this.props.text}</Text>
+              <Text style={[styles.text, this.props.textStyle]} onLayout={(e) => this.onLayout(e)} ellipsizeMode="tail" numberOfLines={5}>{this.props.text}</Text>
             </View>
-            <View style={[styles.handle]} />
+            <View style={[styles.handle, this.props.handleStyle]} />
           </View>
         </View>
       </View>
@@ -133,20 +132,26 @@ class LocalNotification extends Component {
 
 LocalNotification.propTypes = {
   text: React.PropTypes.string.isRequired,
+  startHeight: React.PropTypes.number.isRequired,
   onNotificationPress: React.PropTypes.func,
   onNotificationWillShow: React.PropTypes.func,
 }
 
 LocalNotification.defaultProps = {
   text: 'Hello 👋',
+  textStyle: {},
+  handleStyle: {},
+  notificationStyle: {},
+  ellipsizeTextStyle: {},
+  startHeight: 46,
 };
 
 const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
     top: 0,
-    left: 0,
-    right: 0,
+    left: -1,
+    right: -1,
     backgroundColor: 'transparent'
   },
   animatedView: {
@@ -154,7 +159,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   innerView: {
-    backgroundColor: 'red',
+    backgroundColor: 'white',
+    borderColor: '#ddd',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderLeftWidth: StyleSheet.hairlineWidth,
     paddingTop: 300,
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
