@@ -1,0 +1,11 @@
+{
+  "name": "react-native-local-notification",
+  "version": "1.0.0",
+  "description": "React Native package for showing notifications while in the app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Emil Scherdin",
+  "license": "MIT"
+}
