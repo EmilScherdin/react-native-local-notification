@@ -2,6 +2,9 @@
 
 A package for React Native apps to show in-app notifications. Only tested on iOS but should work on Android.
 
+# Demo
+![local_notification](https://cloud.githubusercontent.com/assets/6998447/22668160/fd930aa2-ecbf-11e6-9a0b-ee03b505ed18.gif)
+
 # Usage
 ```
 <LocalNotification
@@ -12,7 +15,7 @@ A package for React Native apps to show in-app notifications. Only tested on iOS
 ```
 
 ### Use with RN push notification
-Example with use of React Native PushNotificationIOS.
+Example for use with React Native PushNotificationIOS.
 ```
 onReceiveNotification(notification){
   this.setState({
