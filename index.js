@@ -59,7 +59,6 @@ class LocalNotification extends Component {
         Math.abs(gestureState.dx) > 100 || Math.abs(gestureState.dy) > 1,
       onPanResponderGrant: (evt, gestureState) => {
         this.textHeightSetCurrentTouch = false;
-        timer.clearTimeout('duration');
       },
       onPanResponderMove: (evt, gestureState) => {
         if (this.state.textHeight < this.fullTextHeight && gestureState.dy > 0) {
@@ -90,10 +89,12 @@ class LocalNotification extends Component {
           if (this.state.topMargin > 0) {
             LayoutAnimation.easeInEaseOut();
             this.setState({ topMargin: 0 });
+            timer.clearTimeout('duration');
           }
           else if (this.state.textHeight < this.fullTextHeight && this.state.topMargin >= 0) {
             LayoutAnimation.easeInEaseOut();
             this.setState({ textHeight: this.fullTextHeight });
+            timer.clearTimeout('duration');
           }
           else if (this.state.topMargin < 0){
             this.hideNotification();
