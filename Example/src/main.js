@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LocalNotification from 'react-native-local-notification';
-//import LocalNotification from '../../react-native-local-notification';
-
 
 class Main extends Component {
 
