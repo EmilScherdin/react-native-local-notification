@@ -25,6 +25,7 @@ class Main extends Component {
   showNotification() {
     this.setState({
       notifications: [...this.state.notifications, {
+        title: 'Notification title',
         text: 'This is a long notification. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis, mi ut vehicula hendrerit, neque justo scelerisque mi, sed finibus eros libero sit amet libero. Nam sed facilisis ante.',
       }],
     });
@@ -58,9 +59,7 @@ class Main extends Component {
             <Text style={styles.buttonText}>Show short notification</Text>
           </TouchableOpacity>
         </View>
-        {this.state.notifications.map((item, i) => (
-          <LocalNotification key={i} text={item.text} onNotificationPress={() => alert('pressed')} onNotificationHide={this.onNotificationHide} onReset={this.onReset} />
-        ))}
+        <LocalNotification notifications={this.state.notifications} onNotificationPress={() => alert('pressed')} onNotificationHide={this.onNotificationHide} />
       </View>
     );
 
