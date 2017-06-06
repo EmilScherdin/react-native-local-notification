@@ -5,13 +5,14 @@ import {
   Text,
   StyleSheet,
   LayoutAnimation,
+  StatusBar,
   UIManager
 } from 'react-native';
 import timer from 'react-native-timer';
 
 UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 
-class LocalNotification extends Component {
+class LocalNotificationItem extends Component {
 
   constructor(props) {
     super(props);
@@ -119,24 +120,30 @@ class LocalNotification extends Component {
 
   render() {
     const isdragged = this.state.textHeight > this.startHeight;
-
+    console.log(this.props.title)
     return (
       <View style={styles.wrapper}>
         <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -280 + this.state.topMargin + this.state.textHeight}]}>
           <View style={[styles.innerView, this.props.notificationStyle]}>
-            <Text style={[styles.ellipsizeText,{ opacity: isdragged ? 0 : 1 }, this.props.ellipsizeTextStyle]} ellipsizeMode="tail" numberOfLines={2}>{this.props.text}</Text>
-            <View style={[styles.textWrapper, {height: this.state.textHeight, marginTop: -1 * this.state.textHeight, opacity: isdragged ? 1 : 0}]}>
+            <View style={[styles.ellipsizeWrapper,{ opacity: isdragged ? 0 : 1 }]}>
+              {this.props.title && (<Text style={[styles.title]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
+              <Text style={[styles.ellipsizeText,this.props.ellipsizeTextStyle]} ellipsizeMode="tail" numberOfLines={2}>{this.props.text}</Text>
+            </View>
+            <View style={[styles.textWrapper, {height: (this.state.textHeight + (this.props.title ? 22 : 0)), marginTop: -1 * (this.state.textHeight), opacity: isdragged ? 1 : 0}]}>
+              {this.props.title && (<Text style={[styles.title]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
               <Text style={[styles.text, this.props.textStyle]} onLayout={(e) => this.onLayout(e)} ellipsizeMode="tail" numberOfLines={5}>{this.props.text}</Text>
             </View>
             <View style={[styles.handle, this.props.handleStyle]} />
           </View>
+
         </View>
       </View>
     );
   }
 }
 
-LocalNotification.propTypes = {
+LocalNotificationItem.propTypes = {
+  title: React.PropTypes.string,
   text: React.PropTypes.string.isRequired,
   startHeight: React.PropTypes.number.isRequired,
   duration: React.PropTypes.number.isRequired,
@@ -144,13 +151,14 @@ LocalNotification.propTypes = {
   onNotificationWillShow: React.PropTypes.func,
 }
 
-LocalNotification.defaultProps = {
+LocalNotificationItem.defaultProps = {
+  title: null,
   text: 'Hello 👋',
   textStyle: {},
   handleStyle: {},
   notificationStyle: {},
   ellipsizeTextStyle: {},
-  startHeight: 46,
+  startHeight: 44,
   duration: 3500,
 };
 
@@ -172,29 +180,43 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderRightWidth: StyleSheet.hairlineWidth,
     borderLeftWidth: StyleSheet.hairlineWidth,
-    paddingTop: 300,
+    paddingTop: 285,
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
     justifyContent: 'flex-end'
   },
-  ellipsizeText: {
-    position: 'absolute',
-    top: 254,
-    paddingVertical: 8,
+  title: {
+    height: 22,
+    color: 'black',
+    fontWeight: 'bold',
     paddingHorizontal: 16,
+    justifyContent: 'flex-end',
+    paddingTop: 4,
+    fontSize: 16,
+  },
+  ellipsizeWrapper: {
+    position: 'absolute',
+    top: 241,
     left: 0,
-    right: 0,
-    fontSize: 16
+    right: 0
+  },
+  ellipsizeText: {
+    fontSize: 16,
+    paddingTop: 4,
+    paddingBottom: 8,
+    paddingHorizontal: 16
   },
   textWrapper: {
     backgroundColor: 'transparent',
     flex: 1,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   text: {
     fontSize: 16,
-    paddingVertical: 8,
+    paddingTop: 4,
+    paddingBottom: 8,
     paddingHorizontal: 16,
+    color: '#333'
   },
   handle: {
     width: 40,
@@ -206,5 +228,29 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   }
 })
+
+
+class LocalNotification extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentWillReceiveProps(newProps) {
+    newProps.notifications.length > 0 ?
+      StatusBar.setHidden(true, false) :
+      StatusBar.setHidden(false, true);
+  }
+
+  render() {
+    return (
+      <View style={{position: 'absolute', top: 0, left: 0, right: 0}}>
+        {this.props.notifications.map((item, i) => (
+          <LocalNotificationItem key={i} title={item.title} text={item.text} onNotificationPress={this.props.onNotificationPress} onNotificationHide={this.props.onNotificationHide} />
+        ))}
+      </View>
+    );
+  }
+}
 
 export default LocalNotification;
