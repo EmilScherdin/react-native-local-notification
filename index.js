@@ -204,7 +204,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingTop: 4,
     paddingBottom: 8,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    color: '#333'
   },
   textWrapper: {
     backgroundColor: 'transparent',
