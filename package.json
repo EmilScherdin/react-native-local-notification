@@ -1,6 +1,6 @@
 {
   "name": "react-native-local-notification",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "React Native package for showing notifications while in the app",
   "main": "index.js",
   "scripts": {

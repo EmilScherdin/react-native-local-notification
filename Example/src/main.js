@@ -18,49 +18,38 @@ class Main extends Component {
       notifications: [],
     }
 
-    this.onNotificationHide = this.onNotificationHide.bind(this);
-
   }
 
-  showNotification() {
-    this.setState({
-      notifications: [...this.state.notifications, {
-        text: 'This is a long notification. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis, mi ut vehicula hendrerit, neque justo scelerisque mi, sed finibus eros libero sit amet libero. Nam sed facilisis ante.',
-      }],
+  showLongNotification() {
+    this.refs.localNotification.showNotification({
+      title: 'Notification title',
+      text: 'This is a long notification. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis, mi ut vehicula hendrerit, neque justo scelerisque mi, sed finibus eros libero sit amet libero. Nam sed facilisis ante.',
+      onPress: () => alert('hello long'),
+      onHide: () => alert('Byyeeeee'),
     });
   }
 
-  showNotification2() {
-    this.setState({
-      notifications: [...this.state.notifications, {
-        text: 'A short notification.',
-      }],
-    });
-  }
-
-  onNotificationHide(index) {
-    this.setState({
-      notifications: this.state.notifications.slice(0, -1),
+  showShortNotification() {
+    this.refs.localNotification.showNotification({
+      text: 'A short notification.',
+      onPress: () => alert('hello short'),
     });
   }
 
   render() {
-
     return (
       <View style={{flex: 1, backgroundColor: '#f5f5f5'}}>
         <Text style={{textAlign:'center', paddingTop: 30}}>Top</Text>
         <View style={styles.container}>
           <Text style={styles.welcome}>Local Notification</Text>
-          <TouchableOpacity style={styles.button} onPress={() => this.showNotification()}>
+          <TouchableOpacity style={styles.button} onPress={() => this.showLongNotification()}>
             <Text style={styles.buttonText}>Show long notification</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => this.showNotification2()}>
+          <TouchableOpacity style={styles.button} onPress={() => this.showShortNotification()}>
             <Text style={styles.buttonText}>Show short notification</Text>
           </TouchableOpacity>
         </View>
-        {this.state.notifications.map((item, i) => (
-          <LocalNotification key={i} text={item.text} onNotificationPress={() => alert('pressed')} onNotificationHide={this.onNotificationHide} onReset={this.onReset} />
-        ))}
+        <LocalNotification ref="localNotification" />
       </View>
     );
 
