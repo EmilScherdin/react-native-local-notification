@@ -64,7 +64,6 @@ class LocalNotificationItem extends Component {
         Math.abs(gestureState.dx) > 100 || Math.abs(gestureState.dy) > 1,
       onPanResponderGrant: (evt, gestureState) => {
         this.textHeightSetCurrentTouch = false;
-        console.log('cancel timeout')
         timer.clearTimeout(`duration-${this.props.itemId}`);
       },
       onPanResponderMove: (evt, gestureState) => {
@@ -153,6 +152,8 @@ LocalNotificationItem.propTypes = {
   handleStyle: React.PropTypes.object.isRequired,
   notificationStyle: React.PropTypes.object.isRequired,
   ellipsizeTextStyle: React.PropTypes.object.isRequired,
+  onNotificationPress: React.PropTypes.func.isRequired,
+  onNotificationHide: React.PropTypes.func.isRequired,
 }
 
 LocalNotificationItem.defaultProps = {
@@ -292,6 +293,8 @@ class LocalNotification extends Component {
             handleStyle={handleStyle}
             notificationStyle={notificationStyle}
             ellipsizeTextStyle={ellipsizeTextStyle}
+            onNotificationPress={this.onNotificationPress}
+            onNotificationHide={this.hideNotification}
             />
         ))}
       </View>
