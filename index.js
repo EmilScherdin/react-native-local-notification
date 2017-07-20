@@ -22,14 +22,14 @@ class LocalNotificationItem extends Component {
     this._panResponder = null;
     this.fullTextHeight = null;
     this.textHeightSetCurrentTouch = false;
-    this.startHeight = this.props.startHeight;
 
     this.state = {
-      topMargin: -100,
-      textHeight: this.startHeight,
+      topMargin: -180,
       isShowing: false,
+      draggedHeight: 0,
     };
 
+    this.onLayout = this.onLayout.bind(this);
     this.hideNotification = this.hideNotification.bind(this);
   }
 
@@ -67,24 +67,9 @@ class LocalNotificationItem extends Component {
         timer.clearTimeout(`duration-${this.props.itemId}`);
       },
       onPanResponderMove: (evt, gestureState) => {
-        if (this.state.textHeight < this.fullTextHeight && gestureState.dy > 0) {
-          this.setState({
-            textHeight: (gestureState.dy + this.startHeight) > this.fullTextHeight ? this.fullTextHeight : gestureState.dy + this.startHeight,
-          });
-
-          this.textHeightSetCurrentTouch = true;
-          return;
-        }
-        else if(gestureState.dy < 110 && this.textHeightSetCurrentTouch) {
-          this.setState({
-            topMargin: gestureState.dy - (this.state.textHeight - this.startHeight),
-          });
-        }
-        else if (gestureState.dy < 110) {
-          this.setState({
-            topMargin: gestureState.dy,
-          });
-        }
+        this.setState({
+          draggedHeight: gestureState.dy,
+        });
       },
       onPanResponderRelease: (evt, gestureState) => {
         if (this.isPress(gestureState.dy, gestureState.dx)) {
@@ -92,16 +77,20 @@ class LocalNotificationItem extends Component {
           this.hideNotification();
         }
         else {
-          if (this.state.topMargin > 0) {
+          if (this.state.draggedHeight > 0) {
             LayoutAnimation.easeInEaseOut();
-            this.setState({ topMargin: 0 });
+            this.setState({
+              draggedHeight: 0,
+            });
           }
-          else if (this.state.textHeight < this.fullTextHeight && this.state.topMargin >= 0) {
-            LayoutAnimation.easeInEaseOut();
-            this.setState({ textHeight: this.fullTextHeight });
-          }
-          else if (this.state.topMargin < 0){
+          if (this.state.draggedHeight < -10){
             this.hideNotification();
+          }
+          else if (this.state.draggedHeight < 0) {
+            LayoutAnimation.easeInEaseOut();
+            this.setState({
+              draggedHeight: 0,
+            });
           }
         }
       },
@@ -109,31 +98,28 @@ class LocalNotificationItem extends Component {
   }
 
   onLayout(e) {
-    if (!this.state.isShowing) {
+    if (this.state.isShowing)
+      return;
 
-      LayoutAnimation.easeInEaseOut();
-      this.setState({
-        topMargin: 0,
-        isShowing: true,
-      });
-
-      this.fullTextHeight = e.nativeEvent.layout.height;
-    }
+    LayoutAnimation.easeInEaseOut();
+    this.setState({
+      topMargin: 0,
+      isShowing: true,
+    });
   }
 
   render() {
-    const isdragged = this.state.textHeight > this.startHeight;
+    const { draggedHeight } = this.state;
+
     return (
       <View style={styles.wrapper}>
-        <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -280 + this.state.topMargin + this.state.textHeight}]}>
+        <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -300 + (draggedHeight < 180 ? draggedHeight : 180) + this.state.topMargin}]}>
           <View style={[styles.innerView, this.props.notificationStyle]}>
-            <View style={[styles.ellipsizeWrapper,{ opacity: isdragged ? 0 : 1 }]}>
-              {this.props.title && (<Text style={[styles.title]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
-              <Text style={[styles.ellipsizeText,this.props.ellipsizeTextStyle]} ellipsizeMode="tail" numberOfLines={2}>{this.props.text}</Text>
-            </View>
-            <View style={[styles.textWrapper, {height: (this.state.textHeight + (this.props.title ? 22 : 0)), marginTop: -1 * (this.state.textHeight), opacity: isdragged ? 1 : 0}]}>
-              {this.props.title && (<Text style={[styles.title]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
-              <Text style={[styles.text, this.props.textStyle]} onLayout={(e) => this.onLayout(e)} ellipsizeMode="tail" numberOfLines={5}>{this.props.text}</Text>
+            <View style={[styles.textWrapper, { height: (this.state.startHeight + this.state.draggedHeight), opacity: 1}]}>
+              <View onLayout={this.onLayout}>
+                {this.props.title && (<Text style={[styles.title, this.props.titleStyle]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
+                <Text style={[styles.text, this.props.textStyle]} ellipsizeMode="tail" numberOfLines={this.props.numberOfTextLines}>{this.props.text}</Text>
+              </View>
             </View>
             <View style={[styles.handle, this.props.handleStyle]} />
           </View>
@@ -146,12 +132,12 @@ class LocalNotificationItem extends Component {
 LocalNotificationItem.propTypes = {
   title: React.PropTypes.string,
   text: React.PropTypes.string.isRequired,
-  startHeight: React.PropTypes.number.isRequired,
   duration: React.PropTypes.number.isRequired,
   textStyle: React.PropTypes.object.isRequired,
+  titleStyle: React.PropTypes.object.isRequired,
+  numberOfTextLines: React.PropTypes.number.isRequired,
   handleStyle: React.PropTypes.object.isRequired,
   notificationStyle: React.PropTypes.object.isRequired,
-  ellipsizeTextStyle: React.PropTypes.object.isRequired,
   onNotificationPress: React.PropTypes.func.isRequired,
   onNotificationHide: React.PropTypes.func.isRequired,
 }
@@ -179,32 +165,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderRightWidth: StyleSheet.hairlineWidth,
     borderLeftWidth: StyleSheet.hairlineWidth,
-    paddingTop: 285,
+    paddingTop: 300,
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
     justifyContent: 'flex-end'
   },
   title: {
-    height: 22,
+    height: 24,
+    paddingTop: 6,
     color: 'black',
     fontWeight: 'bold',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     justifyContent: 'flex-end',
-    paddingTop: 4,
     fontSize: 16,
-  },
-  ellipsizeWrapper: {
-    position: 'absolute',
-    top: 241,
-    left: 0,
-    right: 0
-  },
-  ellipsizeText: {
-    fontSize: 16,
-    paddingTop: 4,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
-    color: '#333'
   },
   textWrapper: {
     backgroundColor: 'transparent',
@@ -214,8 +187,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     paddingTop: 4,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
+    paddingBottom: 4,
+    paddingHorizontal: 8,
     color: '#333'
   },
   handle: {
@@ -224,7 +197,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: 'rgba(0,0,0,.2)',
     marginBottom: 6,
-    marginTop: 12,
+    marginTop: 4,
     alignSelf: 'center'
   }
 })
@@ -277,7 +250,7 @@ class LocalNotification extends Component {
   }
 
   render() {
-    const { startHeight, duration, textStyle, handleStyle, notificationStyle, ellipsizeTextStyle } = this.props;
+    const { duration, textStyle, titleStyle, handleStyle, notificationStyle, numberOfTextLines } = this.props;
 
     return (
       <View style={{position: 'absolute', top: 0, left: 0, right: 0}}>
@@ -287,14 +260,14 @@ class LocalNotification extends Component {
             itemId={item.id}
             title={item.title}
             text={item.text}
-            startHeight={startHeight}
             duration={duration}
             textStyle={textStyle}
+            titleStyle={titleStyle}
             handleStyle={handleStyle}
             notificationStyle={notificationStyle}
-            ellipsizeTextStyle={ellipsizeTextStyle}
             onNotificationPress={this.onNotificationPress}
             onNotificationHide={this.hideNotification}
+            numberOfTextLines={numberOfTextLines}
             />
         ))}
       </View>
@@ -303,21 +276,20 @@ class LocalNotification extends Component {
 }
 
 LocalNotification.propTypes = {
-  startHeight: React.PropTypes.number.isRequired,
   duration: React.PropTypes.number.isRequired,
   textStyle: React.PropTypes.object.isRequired,
   handleStyle: React.PropTypes.object.isRequired,
   notificationStyle: React.PropTypes.object.isRequired,
-  ellipsizeTextStyle: React.PropTypes.object.isRequired,
+  numberOfTextLines: React.PropTypes.number.isRequired,
 }
 
 LocalNotification.defaultProps = {
   textStyle: {},
   handleStyle: {},
   notificationStyle: {},
-  ellipsizeTextStyle: {},
-  startHeight: 44,
+  titleStyle: {},
   duration: 3500,
+  numberOfTextLines: 2,
 };
 
 export default LocalNotification;

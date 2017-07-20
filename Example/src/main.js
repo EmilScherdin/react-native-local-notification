@@ -11,13 +11,6 @@ class Main extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      showNotification: false,
-      showNotification2: false,
-      notifications: [],
-    }
-
   }
 
   showLongNotification() {
@@ -25,12 +18,13 @@ class Main extends Component {
       title: 'Notification title',
       text: 'This is a long notification. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis, mi ut vehicula hendrerit, neque justo scelerisque mi, sed finibus eros libero sit amet libero. Nam sed facilisis ante.',
       onPress: () => alert('hello long'),
-      onHide: () => alert('Byyeeeee'),
+      onHide: () =>  alert('Byeeee'),
     });
   }
 
   showShortNotification() {
     this.refs.localNotification.showNotification({
+      title: 'Notification title',
       text: 'A short notification.',
       onPress: () => alert('hello short'),
     });
