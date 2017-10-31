@@ -220,14 +220,14 @@ class LocalNotification extends Component {
     const index = this.state.notifications.findIndex(item => item.id === id);
 
     const noti = this.state.notifications[index];
-    noti.onPress && noti.onPress(noti);
+    noti && noti.onPress && noti.onPress(noti);
   }
 
   hideNotification(id) {
     const index = this.state.notifications.findIndex(item => item.id === id);
 
     const noti = this.state.notifications[index];
-    noti.onHide && noti.onHide(noti);
+    noti && noti.onHide && noti.onHide(noti);
 
     const newNotifications = this.state.notifications.slice();
     newNotifications.splice(index, 1);
