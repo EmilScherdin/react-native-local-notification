@@ -1,5 +1,9 @@
 # react-native-local-notification
 
+[![npm version](https://badge.fury.io/js/react-native-local-notification.svg)](https://badge.fury.io/js/react-native-local-notification)
+
+`npm install --save react-native-local-notification`
+
 A package for React Native apps to show in-app notifications. Works for both iOS and Android.
 
 # Demo

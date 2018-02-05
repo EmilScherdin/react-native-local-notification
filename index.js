@@ -11,11 +11,12 @@ import {
   UIManager
 } from 'react-native';
 import timer from 'react-native-timer';
+import PropTypes from 'prop-types';
 
-UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 
 class LocalNotificationItem extends Component {
-
   constructor(props) {
     super(props);
 
@@ -26,7 +27,7 @@ class LocalNotificationItem extends Component {
     this.state = {
       topMargin: -180,
       isShowing: false,
-      draggedHeight: 0,
+      draggedHeight: 0
     };
 
     this.onLayout = this.onLayout.bind(this);
@@ -34,7 +35,11 @@ class LocalNotificationItem extends Component {
   }
 
   componentDidMount() {
-    timer.setTimeout(`duration-${this.props.itemId}`, this.hideNotification, this.props.duration);
+    timer.setTimeout(
+      `duration-${this.props.itemId}`,
+      this.hideNotification,
+      this.props.duration
+    );
   }
 
   isPress(y, x) {
@@ -44,12 +49,12 @@ class LocalNotificationItem extends Component {
   hideNotification() {
     const config = {
       ...LayoutAnimation.Presets.linear,
-      duration: 250,
-    }
+      duration: 250
+    };
     LayoutAnimation.configureNext(config, () => {
       this.props.onNotificationHide(this.props.itemId);
     });
-    this.setState({topMargin: -200});
+    this.setState({ topMargin: -200 });
   }
 
   componentWillMount() {
@@ -68,43 +73,40 @@ class LocalNotificationItem extends Component {
       },
       onPanResponderMove: (evt, gestureState) => {
         this.setState({
-          draggedHeight: gestureState.dy,
+          draggedHeight: gestureState.dy
         });
       },
       onPanResponderRelease: (evt, gestureState) => {
         if (this.isPress(gestureState.dy, gestureState.dx)) {
           this.props.onNotificationPress(this.props.itemId);
           this.hideNotification();
-        }
-        else {
+        } else {
           if (this.state.draggedHeight > 0) {
             LayoutAnimation.easeInEaseOut();
             this.setState({
-              draggedHeight: 0,
+              draggedHeight: 0
             });
           }
-          if (this.state.draggedHeight < -10){
+          if (this.state.draggedHeight < -10) {
             this.hideNotification();
-          }
-          else if (this.state.draggedHeight < 0) {
+          } else if (this.state.draggedHeight < 0) {
             LayoutAnimation.easeInEaseOut();
             this.setState({
-              draggedHeight: 0,
+              draggedHeight: 0
             });
           }
         }
-      },
+      }
     });
   }
 
   onLayout(e) {
-    if (this.state.isShowing)
-      return;
+    if (this.state.isShowing) return;
 
     LayoutAnimation.easeInEaseOut();
     this.setState({
       topMargin: 0,
-      isShowing: true,
+      isShowing: true
     });
   }
 
@@ -113,12 +115,45 @@ class LocalNotificationItem extends Component {
 
     return (
       <View style={styles.wrapper}>
-        <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -300 + (draggedHeight < 180 ? draggedHeight : 180) + this.state.topMargin}]}>
+        <View
+          {...this._panResponder.panHandlers}
+          style={[
+            styles.animatedView,
+            {
+              marginTop:
+                -300 +
+                (draggedHeight < 180 ? draggedHeight : 180) +
+                this.state.topMargin
+            }
+          ]}
+        >
           <View style={[styles.innerView, this.props.notificationStyle]}>
-            <View style={[styles.textWrapper, { height: (this.state.startHeight + this.state.draggedHeight), opacity: 1}]}>
+            <View
+              style={[
+                styles.textWrapper,
+                {
+                  height: this.state.startHeight + this.state.draggedHeight,
+                  opacity: 1
+                }
+              ]}
+            >
               <View onLayout={this.onLayout}>
-                {this.props.title && (<Text style={[styles.title, this.props.titleStyle]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
-                <Text style={[styles.text, this.props.textStyle]} ellipsizeMode="tail" numberOfLines={this.props.numberOfTextLines}>{this.props.text}</Text>
+                {this.props.title && (
+                  <Text
+                    style={[styles.title, this.props.titleStyle]}
+                    ellipsizeMode="tail"
+                    numberOfLines={1}
+                  >
+                    {this.props.title}
+                  </Text>
+                )}
+                <Text
+                  style={[styles.text, this.props.textStyle]}
+                  ellipsizeMode="tail"
+                  numberOfLines={this.props.numberOfTextLines}
+                >
+                  {this.props.text}
+                </Text>
               </View>
             </View>
             <View style={[styles.handle, this.props.handleStyle]} />
@@ -130,21 +165,21 @@ class LocalNotificationItem extends Component {
 }
 
 LocalNotificationItem.propTypes = {
-  title: React.PropTypes.string,
-  text: React.PropTypes.string.isRequired,
-  duration: React.PropTypes.number.isRequired,
-  textStyle: React.PropTypes.object.isRequired,
-  titleStyle: React.PropTypes.object.isRequired,
-  numberOfTextLines: React.PropTypes.number.isRequired,
-  handleStyle: React.PropTypes.object.isRequired,
-  notificationStyle: React.PropTypes.object.isRequired,
-  onNotificationPress: React.PropTypes.func.isRequired,
-  onNotificationHide: React.PropTypes.func.isRequired,
-}
+  title: PropTypes.string,
+  text: PropTypes.string.isRequired,
+  duration: PropTypes.number.isRequired,
+  textStyle: PropTypes.object.isRequired,
+  titleStyle: PropTypes.object.isRequired,
+  numberOfTextLines: PropTypes.number.isRequired,
+  handleStyle: PropTypes.object.isRequired,
+  notificationStyle: PropTypes.object.isRequired,
+  onNotificationPress: PropTypes.func.isRequired,
+  onNotificationHide: PropTypes.func.isRequired
+};
 
 LocalNotificationItem.defaultProps = {
   title: null,
-  text: 'Hello 👋',
+  text: 'Hello 👋'
 };
 
 const styles = StyleSheet.create({
@@ -157,7 +192,7 @@ const styles = StyleSheet.create({
   },
   animatedView: {
     backgroundColor: 'transparent',
-    flex: 1,
+    flex: 1
   },
   innerView: {
     backgroundColor: 'white',
@@ -177,12 +212,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingHorizontal: 8,
     justifyContent: 'flex-end',
-    fontSize: 16,
+    fontSize: 16
   },
   textWrapper: {
     backgroundColor: 'transparent',
     flex: 1,
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   text: {
     fontSize: 16,
@@ -200,11 +235,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
     alignSelf: 'center'
   }
-})
-
+});
 
 class LocalNotification extends Component {
-
   constructor(props) {
     super(props);
 
@@ -232,28 +265,35 @@ class LocalNotification extends Component {
     const newNotifications = this.state.notifications.slice();
     newNotifications.splice(index, 1);
     this.setState({
-      notifications: newNotifications,
+      notifications: newNotifications
     });
 
-    newNotifications.length === 0 && Platform.OS === 'ios' && StatusBar.setHidden(false, true);
+    newNotifications.length === 0 &&
+      Platform.OS === 'ios' &&
+      StatusBar.setHidden(false, true);
   }
 
   showNotification(notification) {
     const id = Math.floor(Math.random() * 1000) + Date.now();
     this.setState({
-      notifications: [
-        ...this.state.notifications,
-        { ...notification, id }]
+      notifications: [...this.state.notifications, { ...notification, id }]
     });
 
     Platform.OS === 'ios' && StatusBar.setHidden(true, false);
   }
 
   render() {
-    const { duration, textStyle, titleStyle, handleStyle, notificationStyle, numberOfTextLines } = this.props;
+    const {
+      duration,
+      textStyle,
+      titleStyle,
+      handleStyle,
+      notificationStyle,
+      numberOfTextLines
+    } = this.props;
 
     return (
-      <View style={{position: 'absolute', top: 0, left: 0, right: 0}}>
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
         {this.state.notifications.map((item, i) => (
           <LocalNotificationItem
             key={item.id}
@@ -268,7 +308,7 @@ class LocalNotification extends Component {
             onNotificationPress={this.onNotificationPress}
             onNotificationHide={this.hideNotification}
             numberOfTextLines={numberOfTextLines}
-            />
+          />
         ))}
       </View>
     );
@@ -276,12 +316,12 @@ class LocalNotification extends Component {
 }
 
 LocalNotification.propTypes = {
-  duration: React.PropTypes.number.isRequired,
-  textStyle: React.PropTypes.object.isRequired,
-  handleStyle: React.PropTypes.object.isRequired,
-  notificationStyle: React.PropTypes.object.isRequired,
-  numberOfTextLines: React.PropTypes.number.isRequired,
-}
+  duration: PropTypes.number.isRequired,
+  textStyle: PropTypes.object.isRequired,
+  handleStyle: PropTypes.object.isRequired,
+  notificationStyle: PropTypes.object.isRequired,
+  numberOfTextLines: PropTypes.number.isRequired
+};
 
 LocalNotification.defaultProps = {
   textStyle: {},
@@ -289,7 +329,7 @@ LocalNotification.defaultProps = {
   notificationStyle: {},
   titleStyle: {},
   duration: 3500,
-  numberOfTextLines: 2,
+  numberOfTextLines: 2
 };
 
 export default LocalNotification;
