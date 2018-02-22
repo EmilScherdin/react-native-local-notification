@@ -275,11 +275,11 @@ class LocalNotification extends Component {
 }
 
 LocalNotification.propTypes = {
-  duration: React.PropTypes.number.isRequired,
-  textStyle: React.PropTypes.object.isRequired,
-  handleStyle: React.PropTypes.object.isRequired,
-  notificationStyle: React.PropTypes.object.isRequired,
-  numberOfTextLines: React.PropTypes.number.isRequired,
+  duration: PropTypes.number.isRequired,
+  textStyle: PropTypes.object.isRequired,
+  handleStyle: PropTypes.object.isRequired,
+  notificationStyle: PropTypes.object.isRequired,
+  numberOfTextLines: PropTypes.number.isRequired,
 }
 
 LocalNotification.defaultProps = {
