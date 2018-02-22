@@ -12,8 +12,6 @@ import {
 } from 'react-native';
 import timer from 'react-native-timer';
 
-UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
-
 class LocalNotificationItem extends Component {
 
   constructor(props) {
