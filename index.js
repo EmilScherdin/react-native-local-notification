@@ -10,6 +10,7 @@ import {
   StatusBar,
   UIManager
 } from 'react-native';
+import PropTypes from 'prop-types';
 import timer from 'react-native-timer';
 
 class LocalNotificationItem extends Component {
@@ -128,16 +129,16 @@ class LocalNotificationItem extends Component {
 }
 
 LocalNotificationItem.propTypes = {
-  title: React.PropTypes.string,
-  text: React.PropTypes.string.isRequired,
-  duration: React.PropTypes.number.isRequired,
-  textStyle: React.PropTypes.object.isRequired,
-  titleStyle: React.PropTypes.object.isRequired,
-  numberOfTextLines: React.PropTypes.number.isRequired,
-  handleStyle: React.PropTypes.object.isRequired,
-  notificationStyle: React.PropTypes.object.isRequired,
-  onNotificationPress: React.PropTypes.func.isRequired,
-  onNotificationHide: React.PropTypes.func.isRequired,
+  title: PropTypes.string,
+  text: PropTypes.string.isRequired,
+  duration: PropTypes.number.isRequired,
+  textStyle: PropTypes.object.isRequired,
+  titleStyle: PropTypes.object.isRequired,
+  numberOfTextLines: PropTypes.number.isRequired,
+  handleStyle: PropTypes.object.isRequired,
+  notificationStyle: PropTypes.object.isRequired,
+  onNotificationPress: PropTypes.func.isRequired,
+  onNotificationHide: PropTypes.func.isRequired,
 }
 
 LocalNotificationItem.defaultProps = {
