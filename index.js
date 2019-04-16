@@ -114,7 +114,7 @@ class LocalNotificationItem extends Component {
       <View style={styles.wrapper}>
         <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -300 + (draggedHeight < 180 ? draggedHeight : 180) + this.state.topMargin}]}>
           <View style={[styles.innerView, this.props.notificationStyle]}>
-            <View style={[styles.textWrapper, { height: (this.state.startHeight + this.state.draggedHeight), opacity: 1}]}>
+            <View style={[styles.textWrapper]}>
               <View onLayout={this.onLayout}>
                 {this.props.title && (<Text style={[styles.title, this.props.titleStyle]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
                 <Text style={[styles.text, this.props.textStyle]} ellipsizeMode="tail" numberOfLines={this.props.numberOfTextLines}>{this.props.text}</Text>
