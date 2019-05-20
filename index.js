@@ -6,9 +6,7 @@ import {
   StyleSheet,
   Platform,
   LayoutAnimation,
-  InteractionManager,
-  StatusBar,
-  UIManager
+  StatusBar
 } from 'react-native';
 import PropTypes from 'prop-types';
 import timer from 'react-native-timer';
@@ -53,24 +51,24 @@ class LocalNotificationItem extends Component {
 
   componentWillMount() {
     this._panResponder = PanResponder.create({
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onShouldBlockNativeResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onPanResponderTerminate: (evt, gestureState) => {},
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) =>
+      onStartShouldSetPanResponderCapture: () => true,
+      onPanResponderTerminationRequest: () => true,
+      onStartShouldSetPanResponder: () => true,
+      onShouldBlockNativeResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminate: () => {},
+      onMoveShouldSetPanResponderCapture: (_evt, gestureState) =>
         Math.abs(gestureState.dx) > 100 || Math.abs(gestureState.dy) > 1,
-      onPanResponderGrant: (evt, gestureState) => {
+      onPanResponderGrant: () => {
         this.textHeightSetCurrentTouch = false;
         timer.clearTimeout(`duration-${this.props.itemId}`);
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         this.setState({
           draggedHeight: gestureState.dy,
         });
       },
-      onPanResponderRelease: (evt, gestureState) => {
+      onPanResponderRelease: (_evt, gestureState) => {
         if (this.isPress(gestureState.dy, gestureState.dx)) {
           this.props.onNotificationPress(this.props.itemId);
           this.hideNotification();
@@ -96,7 +94,7 @@ class LocalNotificationItem extends Component {
     });
   }
 
-  onLayout(e) {
+  onLayout() {
     if (this.state.isShowing)
       return;
 
@@ -108,19 +106,20 @@ class LocalNotificationItem extends Component {
   }
 
   render() {
-    const { draggedHeight } = this.state;
+    const { draggedHeight, topMargin } = this.state;
+    const { title, notificationStyle, titleStyle, textStyle, numberOfTextLines, text, handleStyle } = this.props;
 
     return (
       <View style={styles.wrapper}>
-        <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -300 + (draggedHeight < 180 ? draggedHeight : 180) + this.state.topMargin}]}>
-          <View style={[styles.innerView, this.props.notificationStyle]}>
+        <View {...this._panResponder.panHandlers} style={[styles.animatedView, {marginTop: -300 + (draggedHeight < 180 ? draggedHeight : 180) + topMargin}]}>
+          <View style={[styles.innerView, notificationStyle]}>
             <View style={[styles.textWrapper]}>
               <View onLayout={this.onLayout}>
-                {this.props.title && (<Text style={[styles.title, this.props.titleStyle]} ellipsizeMode="tail" numberOfLines={1}>{this.props.title}</Text>)}
-                <Text style={[styles.text, this.props.textStyle]} ellipsizeMode="tail" numberOfLines={this.props.numberOfTextLines}>{this.props.text}</Text>
+                {!!title && (<Text style={[styles.title, titleStyle]} ellipsizeMode="tail" numberOfLines={1}>{title}</Text>)}
+                <Text style={[styles.text, textStyle]} ellipsizeMode="tail" numberOfLines={numberOfTextLines}>{text}</Text>
               </View>
             </View>
-            <View style={[styles.handle, this.props.handleStyle]} />
+            <View style={[styles.handle, handleStyle]} />
           </View>
         </View>
       </View>
